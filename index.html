@@ -90,6 +90,86 @@
             font-size: 1.5em;
             cursor: pointer;
         }
+        .shake1 {
+            animation: shake1 0.5s infinite;
+        }
+        .shake2 {
+            animation: shake2 0.5s infinite;
+        }
+        .shake3 {
+            animation: shake3 0.5s infinite;
+        }
+        .shake4 {
+            animation: shake4 0.5s infinite;
+        }
+        .shake5 {
+            animation: shake5 0.5s infinite;
+        }
+        @keyframes shake1 {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        @keyframes shake2 {
+            0% { transform: translate(2px, 2px) rotate(0deg); }
+            10% { transform: translate(-2px, -4px) rotate(-2deg); }
+            20% { transform: translate(-6px, 0px) rotate(2deg); }
+            30% { transform: translate(6px, 4px) rotate(0deg); }
+            40% { transform: translate(2px, -2px) rotate(2deg); }
+            50% { transform: translate(-2px, 4px) rotate(-2deg); }
+            60% { transform: translate(-6px, 2px) rotate(0deg); }
+            70% { transform: translate(6px, 2px) rotate(-2deg); }
+            80% { transform: translate(-2px, -2px) rotate(2deg); }
+            90% { transform: translate(2px, 4px) rotate(0deg); }
+            100% { transform: translate(2px, -4px) rotate(-2deg); }
+        }
+        @keyframes shake3 {
+            0% { transform: translate(3px, 3px) rotate(0deg); }
+            10% { transform: translate(-3px, -6px) rotate(-3deg); }
+            20% { transform: translate(-9px, 0px) rotate(3deg); }
+            30% { transform: translate(9px, 6px) rotate(0deg); }
+            40% { transform: translate(3px, -3px) rotate(3deg); }
+            50% { transform: translate(-3px, 6px) rotate(-3deg); }
+            60% { transform: translate(-9px, 3px) rotate(0deg); }
+            70% { transform: translate(9px, 3px) rotate(-3deg); }
+            80% { transform: translate(-3px, -3px) rotate(3deg); }
+            90% { transform: translate(3px, 6px) rotate(0deg); }
+            100% { transform: translate(3px, -6px) rotate(-3deg); }
+        }
+        @keyframes shake4 {
+            0% { transform: translate(4px, 4px) rotate(0deg); }
+            10% { transform: translate(-4px, -8px) rotate(-4deg); }
+            20% { transform: translate(-12px, 0px) rotate(4deg); }
+            30% { transform: translate(12px, 8px) rotate(0deg); }
+            40% { transform: translate(4px, -4px) rotate(4deg); }
+            50% { transform: translate(-4px, 8px) rotate(-4deg); }
+            60% { transform: translate(-12px, 4px) rotate(0deg); }
+            70% { transform: translate(12px, 4px) rotate(-4deg); }
+            80% { transform: translate(-4px, -4px) rotate(4deg); }
+            90% { transform: translate(4px, 8px) rotate(0deg); }
+            100% { transform: translate(4px, -8px) rotate(-4deg); }
+        }
+        @keyframes shake5 {
+            0% { transform: translate(5px, 5px) rotate(0deg); }
+            10% { transform: translate(-5px, -10px) rotate(-5deg); }
+            20% { transform: translate(-15px, 0px) rotate(5deg); }
+            30% { transform: translate(15px, 10px) rotate(0deg); }
+            40% { transform: translate(5px, -5px) rotate(5deg); }
+            50% { transform: translate(-5px, 10px) rotate(-5deg); }
+            60% { transform: translate(-15px, 5px) rotate(0deg); }
+            70% { transform: translate(15px, 5px) rotate(-5deg); }
+            80% { transform: translate(-5px, -5px) rotate(5deg); }
+            90% { transform: translate(5px, 10px) rotate(0deg); }
+            100% { transform: translate(5px, -10px) rotate(-5deg); }
+        }
     </style>
 </head>
 <body>
@@ -111,6 +191,8 @@
     
     <script>
         let combo = 0;
+        let comboTimeout;
+
         function showRandomCheese() {
             combo++;
             document.getElementById("comboCount").innerText = combo;
@@ -120,8 +202,37 @@
             
             document.getElementById("cheeseLink").href = searchUrl;
             document.getElementById("cheeseLink").innerText = "ENTER THE CHEESE DIMENSION";
+
+            applyShakeEffect();
+            resetComboTimeout();
         }
-        
+
+        function applyShakeEffect() {
+            const body = document.body;
+            body.classList.remove('shake1', 'shake2', 'shake3', 'shake4', 'shake5');
+
+            if (combo >= 35) {
+                body.classList.add('shake5');
+            } else if (combo >= 25) {
+                body.classList.add('shake4');
+            } else if (combo >= 15) {
+                body.classList.add('shake3');
+            } else if (combo >= 10) {
+                body.classList.add('shake2');
+            } else if (combo >= 5) {
+                body.classList.add('shake1');
+            }
+        }
+
+        function resetComboTimeout() {
+            clearTimeout(comboTimeout);
+            comboTimeout = setTimeout(() => {
+                combo = 0;
+                document.getElementById("comboCount").innerText = combo;
+                document.body.classList.remove('shake1', 'shake2', 'shake3', 'shake4', 'shake5');
+            }, 3000);
+        }
+
         // Automatically show Mario dancing after 3 seconds
         setTimeout(() => {
             document.getElementById("marioGif").style.display = "block";
