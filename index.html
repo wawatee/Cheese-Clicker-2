@@ -55,6 +55,12 @@
             font-size: 2em;
             color: red;
             margin-top: 10px;
+            animation: comboPulse 0.5s ease-in-out;
+        }
+        @keyframes comboPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.5); }
+            100% { transform: scale(1); }
         }
         #cheeseLink {
             margin-top: 60px; /* Increased margin to move the link further down */
@@ -192,19 +198,41 @@
     <script>
         let combo = 0;
         let comboTimeout;
+        const usedSearchTerms = new Set();
+        const searchTerms = [
+            "cheddar cheese", "brie cheese", "gouda cheese", "swiss cheese", "parmesan cheese", "blue cheese", "mozzarella cheese", "camembert cheese", "halloumi cheese", "havarti cheese",
+            "peter griffin", "cheese clicker", "cheese fondue", "cheese platter", "cheese", "cheese sandwich", "cheese burger", "cheese fries", "cheese dip", "cheese cake",
+            "cheese sticks", "cheese balls", "cheese bread", "cheese soup", "cheese sauce", "cheese omelette", "cheese pasta", "cheese salad", "cheese roll", "cheese pie"
+        ];
 
         function showRandomCheese() {
             combo++;
             document.getElementById("comboCount").innerText = combo;
-            const searchTerms = ["cheddar cheese", "brie cheese", "gouda cheese", "swiss cheese", "parmesan cheese", "blue cheese", "mozzarella cheese", "camembert cheese", "halloumi cheese", "havarti cheese", "peter griffin", "cheese clicker"];
-            const randomTerm = searchTerms[Math.floor(Math.random() * searchTerms.length)];
+            document.getElementById("comboCount").classList.add('comboPulse');
+            setTimeout(() => {
+                document.getElementById("comboCount").classList.remove('comboPulse');
+            }, 500);
+
+            let randomTerm;
+            do {
+                randomTerm = searchTerms[Math.floor(Math.random() * searchTerms.length)];
+            } while (usedSearchTerms.has(randomTerm));
+
+            usedSearchTerms.add(randomTerm);
+            if (usedSearchTerms.size === searchTerms.length) {
+                usedSearchTerms.clear();
+            }
+
             const searchUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(randomTerm)}`;
-            
             document.getElementById("cheeseLink").href = searchUrl;
             document.getElementById("cheeseLink").innerText = "ENTER THE CHEESE DIMENSION";
 
             applyShakeEffect();
             resetComboTimeout();
+
+            if (combo >= 50) {
+                explodeAndRefresh();
+            }
         }
 
         function applyShakeEffect() {
@@ -231,6 +259,11 @@
                 document.getElementById("comboCount").innerText = combo;
                 document.body.classList.remove('shake1', 'shake2', 'shake3', 'shake4', 'shake5');
             }, 3000);
+        }
+
+        function explodeAndRefresh() {
+            alert("BOOM! The game has exploded!");
+            location.reload();
         }
 
         // Automatically show Mario dancing after 3 seconds
