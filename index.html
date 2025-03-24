@@ -11,9 +11,10 @@
             background: linear-gradient(45deg, #ffeb99, #ffcc66);
             margin: 0;
             padding: 0;
-            overflow: hidden;
+            min-height: 200vh; /* Set minimum height to enable scrolling */
             animation: backgroundPulse 5s infinite alternate;
             cursor: url('assets/material-cheese-cursor.png'), auto;
+            transition: background 1s;
         }
         @keyframes backgroundPulse {
             from { background: linear-gradient(45deg, #ffeb99, #ffcc66); }
@@ -111,6 +112,9 @@
         .shake5 {
             animation: shake5 0.5s infinite;
         }
+        .shake6 {
+            animation: shake6 0.5s infinite;
+        }
         @keyframes shake1 {
             0% { transform: translate(1px, 1px) rotate(0deg); }
             10% { transform: translate(-1px, -2px) rotate(-1deg); }
@@ -176,21 +180,31 @@
             90% { transform: translate(5px, 10px) rotate(0deg); }
             100% { transform: translate(5px, -10px) rotate(-5deg); }
         }
-        #explosionGif {
+        @keyframes shake6 {
+            0% { transform: translate(6px, 6px) rotate(0deg); }
+            10% { transform: translate(-6px, -12px) rotate(-6deg); }
+            20% { transform: translate(-18px, 0px) rotate(6deg); }
+            30% { transform: translate(18px, 12px) rotate(0deg); }
+            40% { transform: translate(6px, -6px) rotate(6deg); }
+            50% { transform: translate(-6px, 12px) rotate(-6deg); }
+            60% { transform: translate(-18px, 6px) rotate(0deg); }
+            70% { transform: translate(18px, 6px) rotate(-6deg); }
+            80% { transform: translate(-6px, -6px) rotate(6deg); }
+            90% { transform: translate(6px, 12px) rotate(0deg); }
+            100% { transform: translate(6px, -12px) rotate(-6deg); }
+        }
+        #bottomImage {
             display: none;
             width: 100%;
-            height: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
+            position: absolute;
+            bottom: 0;
         }
     </style>
 </head>
 <body>
     <h1>🧀 ULTIMATE CHEESE EXPERIENCE 🧀</h1>
     <p class="combo">Combo: <span id="comboCount">0</span></p>
-    <button onclick="showRandomCheese()">GET CHEESE NOW</button>
+    <button id="cheeseButton" onclick="showRandomCheese()">GET CHEESE NOW</button>
     <br>
     <a id="cheeseLink" href="#" target="_blank">EXPLORE THE CHEESE REALM</a>
     
@@ -204,11 +218,7 @@
     </audio>
     <button id="muteButton" onclick="toggleMute()">🔊</button>
 
-    <img id="explosionGif" src="assets/explode.gif" alt="Explosion">
-    <audio id="explosionSound">
-        <source src="assets/deltarune explosion greenscreen.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
+    <img id="bottomImage" src="https://github.com/wawatee/Cheese-Clicker-2/blob/main/assets/image.png?raw=true" alt="Bottom Image">
     
     <script>
         let combo = 0;
@@ -218,7 +228,8 @@
             "cheddar cheese", "brie cheese", "gouda cheese", "swiss cheese", "parmesan cheese", "blue cheese", "mozzarella cheese", "camembert cheese", "halloumi cheese", "havarti cheese",
             "peter griffin", "cheese clicker", "cheese fondue", "cheese platter", "cheese pizza", "cheese sandwich", "cheese burger", "cheese fries", "cheese dip", "cheese cake",
             "cheese sticks", "cheese balls", "cheese bread", "cheese soup", "cheese sauce", "cheese omelette", "cheese pasta", "cheese salad", "cheese roll", "cheese pie",
-            "cheese nachos", "cheese tacos", "cheese burrito", "cheese quesadilla", "cheese enchilada", "cheese lasagna", "cheese ravioli", "cheese gnocchi", "cheese risotto", "cheese fondue"
+            "cheese nachos", "cheese tacos", "cheese burrito", "cheese quesadilla", "cheese enchilada", "cheese lasagna", "cheese ravioli", "cheese gnocchi", "cheese risotto", "cheese fondue",
+            "cheese puffs", "cheese crackers", "cheese dipper", "cheese fonduta", "cheese souffle", "cheese tart", "cheese croissant", "cheese scone", "cheese muffin", "cheese pancake", "Wawa Cat"
         ];
 
         function showRandomCheese() {
@@ -241,21 +252,27 @@
 
             const searchUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(randomTerm)}`;
             document.getElementById("cheeseLink").href = searchUrl;
-            document.getElementById("cheeseLink").innerText = "ENTER THE CHEESE DIMENSION";
+            document.getElementById("cheeseLink").innerText = "You got " + randomTerm + "!";
 
             applyShakeEffect();
             resetComboTimeout();
 
             if (combo >= 50) {
-                explodeAndRefresh();
+                applyHardShakeEffect();
+                hideCheeseButton();
+                setTimeout(() => {
+                    location.reload();
+                }, 4000);
             }
         }
 
         function applyShakeEffect() {
             const body = document.body;
-            body.classList.remove('shake1', 'shake2', 'shake3', 'shake4', 'shake5');
+            body.classList.remove('shake1', 'shake2', 'shake3', 'shake4', 'shake5', 'shake6');
 
-            if (combo >= 35) {
+            if (combo >= 50) {
+                applyHardShakeEffect();
+            } else if (combo >= 35) {
                 body.classList.add('shake5');
             } else if (combo >= 25) {
                 body.classList.add('shake4');
@@ -273,18 +290,21 @@
             comboTimeout = setTimeout(() => {
                 combo = 0;
                 document.getElementById("comboCount").innerText = combo;
-                document.body.classList.remove('shake1', 'shake2', 'shake3', 'shake4', 'shake5');
+                document.body.classList.remove('shake1', 'shake2', 'shake3', 'shake4', 'shake5', 'shake6');
             }, 3000);
         }
 
-        function explodeAndRefresh() {
-            const explosionGif = document.getElementById('explosionGif');
-            const explosionSound = document.getElementById('explosionSound');
-            explosionGif.style.display = 'block';
-            explosionSound.play();
+        function applyHardShakeEffect() {
+            const body = document.body;
+            body.classList.add('shake6');
+        }
+
+        function hideCheeseButton() {
+            const cheeseButton = document.getElementById('cheeseButton');
+            cheeseButton.style.display = 'none';
             setTimeout(() => {
-                location.reload();
-            }, 3000); // Adjust the timeout to match the length of the explosion sound
+                cheeseButton.style.display = 'inline-block';
+            }, 4000);
         }
 
         // Automatically show Mario dancing after 3 seconds
@@ -306,6 +326,22 @@
                 document.getElementById('muteButton').innerText = '🔇';
             }
         }
+
+        // Change background color and show image when scrolling down
+        window.addEventListener('scroll', () => {
+            const scrollHeight = document.documentElement.scrollHeight;
+            const scrollTop = document.documentElement.scrollTop;
+            const clientHeight = document.documentElement.clientHeight;
+            const bottomImage = document.getElementById('bottomImage');
+
+            if (scrollTop + clientHeight >= scrollHeight - 50) {
+                document.body.style.background = 'black';
+                bottomImage.style.display = 'block';
+            } else {
+                document.body.style.background = 'linear-gradient(45deg, #ffeb99, #ffcc66)';
+                bottomImage.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
